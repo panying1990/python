@@ -22,11 +22,30 @@ def classify0(inX, dataSet, labels, k)
     diffMat = tile(intX, (dataSetSize,1))-dataSet
     sqDiffMat = diffMat**2
     sqDistances = sqDiffMat.sum(axis=1)
-    distances = sqDistances**0.5 -- "两点之间距离计算" --
+    distances = sqDistances**0.5    ""两点之间距离计算""
     sortedDistIndicies = distances.argsort()
     classCount = {}
-    for i in range(K):
-        voteIlabel = labels[sortedDistIndicies[i]]
-    
+    for i in range(K):  ""获得排名前k的距离点的类型""
+        voteIlabel = labels[sortedDistIndicies[i]
+        classCount[voteIlabel] = classCount.get(voteIlabel,0)+1
+    sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True )
+    return sortedClassCount[0][0]
 
   
+""在约会网站上使用K-近邻算法算法""
+""1、收集数据：提供文本文件
+""2、准备数据：使用python解析文本文件；
+""3、分析数据：使用Matpoltlib画二维扩散图；
+""4、训练算法：此步骤不适用于K-邻近算法：
+""5、测试算法：使用初始提供的部分数据作为测试样本。测试样本与非测试样本的区别在于：测试样本是已经完成分类的数据，如果预测分类与实际类别不同，则标记为一个错误
+""6、使用算法：产生简单的命令行程序，然后输入一些特征数据以判断对方是否为符合类别                     
+
+def file2matrix(fliename):
+    fr = open(filename)
+   
+                            
+                      
+     
+                            
+                         
+                          
