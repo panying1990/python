@@ -14,4 +14,10 @@ def calcShannonEnt(dataSet):
     for key in labelCounts:
         prob = float(labelCounts[key])/numEntries
         shannonEnt -=prob * log(prob,2)
-    return shannonEnt
+    return ShannonEnt 
+ 
+def splitDataSet(dataSet, axis, value):
+    retDataSet = []
+    for featVec in dataSet:
+        if featVec[axis]  == value:
+            
