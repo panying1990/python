@@ -10,6 +10,9 @@
 
 # 2、准备数据：从文本中构建词向量
 # 词表到向量的转换函数
+
+from numpy import *
+
 def loadDataSet():
     postingList = [['my','dog','has','flea',\'
                     problems','help','please'],
@@ -38,7 +41,13 @@ def setOfWords2Vec(vocabList, inputSet):
            returnVec[vocabList.index(word)] = 1
         else: print "the word: %s is not in my Vocabbulary!" % word
     return returnVec
+ 
+ # 朴素贝叶斯分类器训练函数
+ def trainNBO(trainMatrix,trainCategory)
         
         
-        
-        
+# 程序执行部分
+import naiveBayes
+listOPosts,listClasses = naiveBayes.loadDataSet()
+myVocabList = naiveBayes.createVocabList(listOPosts)
+naiveBayes.setOfWords2Vec(myVocabList,listOPosts[0])    
