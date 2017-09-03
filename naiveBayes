@@ -61,8 +61,13 @@ def setOfWords2Vec(vocabList, inputSet):
          else:
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
+     '''
      p1ect = p1Num/p1Denom       #change to log()  对每个元素做除法
      p0ect = p0Num/p0Denom       #change to log()
+     最后获得的pxect中的数据因太小数相乘，则获得值更小，故将其对数化，降低数据的离散化程度
+     '''
+     p1ect = log(p1Num/p1Denom)       #change to log()  对每个元素做除法
+     p0ect = log(p0Num/p0Denom)       #change to log()
      
 # 程序执行部分
 import naiveBayes
