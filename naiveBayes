@@ -62,13 +62,20 @@ def setOfWords2Vec(vocabList, inputSet):
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
      '''
-     p1ect = p1Num/p1Denom       #change to log()  对每个元素做除法
-     p0ect = p0Num/p0Denom       #change to log()
+     p1Vect = p1Num/p1Denom       #change to log()  对每个元素做除法
+     p0Vect = p0Num/p0Denom       #change to log()
      最后获得的pxect中的数据因太小数相乘，则获得值更小，故将其对数化，降低数据的离散化程度
      '''
-     p1ect = log(p1Num/p1Denom)       #change to log()  对每个元素做除法
-     p0ect = log(p0Num/p0Denom)       #change to log()
-     
+     p1Vect = log(p1Num/p1Denom)       #change to log()  对每个元素做除法
+     p0Vect = log(p0Num/p0Denom)       #change to log()
+
+#朴素贝叶斯分类函数
+
+def classifyNB(vec2Classify, p0Vect, p1Vect, pClass1):
+    p1 = sum(vec2Classify *p1Vect) +log(pClass1)   # 元素相乘
+ 
+
+
 # 程序执行部分
 import naiveBayes
 from numpy import *
