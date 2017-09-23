@@ -1,3 +1,4 @@
+<pre><code>
 # author:panying
 # do something about the Bayes
 # 一般步骤:对朴素贝叶斯的一般算法路径做描述
@@ -86,3 +87,9 @@ for postinDoc in listOPosts:
     trainMat.append(naiveBayes.setOfWords2Vec(myVocabList, postinDoc)) #使用循环填充每个文档中各元素
 p0V,p1V,pAb = naiveBayes.trainNBO(trainMat,listClasses)
 # naiveBayes.setOfWords2Vec(myVocabList,listOPosts[0])    
+</code></pre>
+
+## 使用朴素贝叶斯来发现地域相关的用词
+
+
+
