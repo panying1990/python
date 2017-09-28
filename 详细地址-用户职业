@@ -1,0 +1,5 @@
+import pandas as pd
+import pymysql
+conn = pymysql.connect(host="192.168.111.251", user="root", passwd="P#y20bsy17", db="tag_explore", charset="utf8")
+sql = "select * from address_jobtype_data"
+address_jobtype_data = pd.read_sql(sql, conn)
