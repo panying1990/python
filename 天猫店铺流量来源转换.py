@@ -8,24 +8,22 @@ import sys
 import os
 import pandas as pd
 from pandas import DataFrame
+import xlrd
 
 # 设置工作路径
 # 获取当前工作目录
-file_dir=os.getcwd()    
-os.chdir(file_dir) 
+file_dir=os.getcwd()
+os.chdir(file_dir)
 # 获取工作目录下的目标文件
-file
-xls_file_name = r'【生意参谋平台】无线店铺流量来源-2017-11-01_2017-11-01.xls'
-file_year_month_date = '2017-11-01'
+year_month_date = '2017-11-01'
+channel_name = 'PC'
+file_name='【生意参谋平台】'+channel_name+'店铺流量来源-'+year_month_date+'_'+year_month_date
+xls_file_name = file_name+'.xls'
 xls_book = xlrd.open_workbook(xls_file_name) 
 xls_sheetname = xls_book.sheet_names()[0]
 #获得指定索引的sheet名字  
 xls_sheet1=xls_book.sheet_by_name(xls_sheetname) #通过sheet名字来获取，当然如果你知道sheet名字了可以直接指定  
-nrows = int(xls_sheet1.nrows)import numpy as np
-import sys
-import pandas as pd
-from pandas import DataFrame
-import os
+nrows = int(xls_sheet1.nrows)
 xls_file_name = r'【生意参谋平台】无线店铺流量来源-2017-11-01_2017-11-01.xls'
 file_year_month_date = '2017-11-01'
 xls_book = xlrd.open_workbook(xls_file_name) 
