@@ -7,3 +7,5 @@
 ## 项目列表
 
 1、天猫生意参谋-自助取数数据处理
+
+[自助取数]https://github.com/panying1990/python/blob/master/selfhelp_input.py
