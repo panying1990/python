@@ -166,9 +166,9 @@ def Merge_productfile(filelist, product_name,dt):
 # 将店铺目标数据集插入到Mysql目标数据集合
 def exportmysql(dataset):
     # 连接上数据库
-    connection = pymysql.connect (host='192.168.111.251',
-                                  user='root',
-                                  password='P#y20bsy17',
+    connection = pymysql.connect (host='888888888',
+                                  user='888888',
+                                  password='88888888',
                                   db='master_data',
                                   charset='utf8',
                                   cursorclass=pymysql.cursors.DictCursor)
