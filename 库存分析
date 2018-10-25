@@ -1,0 +1,141 @@
+1、设置基础环境
+
+# 数据处理
+import pymysql
+from sqlalchemy import create_engine 
+import numpy as np
+import pandas as pd
+# 数据可视化
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pyecharts
+
+# 辅助库
+import math 
+from datetime import datetime
+
+%matplotlib inline
+plt.style.use('ggplot')
+plt.rcParams['font.sans-serif'] = ['SimHei']  #解决seaborn中文字体显示问题
+
+2、读取相关数据
+# 读取mysql数据库中的数据
+engine = create_engine('mysql+pymysql://******:Gsc.2018@***.168.***.251/*****')
+data = pd.read_sql_table('医药库存原始表', engine)
+
+
+# 新建data_clean用于储存清洗后的数据
+data_clean = data
+data_clean['产品批号'].unique()
+data_clean['产品批号'] = data['产品批号'].str.extract('([0-9]{6,15})', expand=True)
+data_clean['产品批号辅助'] = data_clean['产品批号'].str.extract('([1][0-9][0-1][0-9][0-3][0-9])', expand=True)
+# 对产品批号为空的数据进行删除
+data_clean = data_clean[data_clean["产品批号辅助"].notnull()]
+
+# 定义数据转换工作
+def convert_date(string):
+    
+    if int(string[2:4]) >= 1 and int(string[2:4]) <= 12 and int(string[4:6]) >= 1 and int(string[4:6]) <= 31:
+        new_string = '20' + string[:2] + '-' + string[2:4] + '-' + string[4:6] 
+        return new_string
+    else:
+        return '2010-01-01'
+        
+ data_clean.is_copy = False
+ data_clean['生产日期'] = data_clean['产品批号辅助'].apply(convert_date) 
+ data_clean['生产日期']
+ data_clean['生产日期'].unique()
+ data_clean['生产日期'] = data_clean['生产日期'].apply(lambda x: datetime.strptime(x,'%Y-%m-%d'))
+ data_clean.info()
+ data_clean['产品品类'].unique()
+ data_clean.loc[data_clean['产品品类'] == '减肥茶', '产品品类'] = '常菁茶'
+ data_clean['产品品类'].unique()
+ 
+ # 设置产品有效期函数
+ def create_period(string):
+    if string == '常润茶':
+        return 18.0
+    elif string == '常菁茶':
+        return 20.0
+    elif string == '减肥茶':
+        return 20.0
+    elif string == '纤纤茶':
+        return 24.0
+    elif string == '开塞露':
+        return 36.0
+    elif string == '来利奥利司他':
+        return 36.0
+    elif string == '碧生源奥利司他':
+        return 24.0
+    else:
+        return 0.0
+    
+data_clean['产品保质期'] = data_clean['产品品类'].apply(create_period)
+
+# 定义不同月份的月末时间
+def create_day(string):
+    if string[5:7] == '01':
+        return string + '-31'
+    elif string[5:7] == '02':
+        return string + '-28'
+    elif string[5:7] == '03':
+        return string + '-31'
+    elif string[5:7] == '04':
+        return string + '-30'
+    elif string[5:7] == '05':
+        return string + '-31'
+    elif string[5:7] == '06':
+        return string + '-30'
+    elif string[5:7] == '07':
+        return string + '-31'
+    elif string[5:7] == '08':
+        return string + '-31'
+    elif string[5:7] == '09':
+        return string + '-30'
+    elif string[5:7] == '10':
+        return string + '-31'
+    elif string[5:7] == '11':
+        return string + '-30'
+    elif string[5:7] == '12':
+        return string + '-31'
+    else:
+        return '2018-01-01'
+    
+data_clean['上传周期'] = data_clean['上传周期'].apply(create_day)
+
+data_clean['上传周期']
+# 转换月末日期时间格式
+data_clean['上传周期'] = data_clean['上传周期'].apply(lambda x: datetime.strptime(x,'%Y-%m-%d'))
+out_factory_days = data_clean['上传周期'] - data_clean['生产日期']
+
+# 转换成月份并且向上取整
+out_factory_days = out_factory_days.map(lambda x:x.days)
+out_factory_months = (out_factory_days / 30).apply(math.ceil)
+data_clean['产品有效期'] = data_clean['产品保质期'] - out_factory_months
+
+# 将连续的效期值划分为离散效期值
+def period_classification(string):
+    
+    if string < -36:
+        return '异常'
+    elif string < 0 :
+        return '过期'
+    elif string >= 0 and string <= 6:
+        return '1-6个月'
+    elif string >= 7 and string <=9:
+        return '7-9个月'
+    elif string >= 10 and string <= 12:
+        return '10-12个月'
+    elif string >= 13:
+        return '13个月及以上'
+    else:
+        return np.nan
+    
+data_clean['产品有效期分类'] = data_clean['产品有效期'].apply(period_classification)
+
+# 将其中江苏问题替换
+data_clean.loc[data_clean['客户所在省']=='江苏', '客户所在省'] = '江苏省'
+
+data_clean.info()
+# 数据写入，若是终端数据存在该数据库，则先删除后添加
+data_clean.to_sql(name='stock_dataset_template', con=engine, if_exists = 'replace', index = False)
