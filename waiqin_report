@@ -1,0 +1,25 @@
+# 数据处理
+import pymysql
+from sqlalchemy import create_engine 
+import numpy as np
+import pandas as pd
+# 数据可视化
+import matplotlib.pyplot as plt
+import seaborn as sns
+#import pyecharts
+
+# 辅助库
+import math 
+from datetime import datetime
+
+%matplotlib inline
+plt.style.use('ggplot')
+plt.rcParams['font.sans-serif'] = ['SimHei']  #解决seaborn中文字体显示问题
+
+'''
+create_engine()用来初始化数据库连接。SQLAlchemy用一个字符串表示连接信息：
+'数据库类型+数据库驱动名称://用户名:口令@机器地址:端口号/数据库名'
+'''
+# 读取mysql数据库中的数据
+engine = create_engine('mysql+pymysql://******:Gsc.2018@***.168.***.251/*****')
+data = pd.read_sql_table('医药库存原始表', engine)
