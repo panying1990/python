@@ -1,0 +1,49 @@
+# 数据处理
+import pymysql
+from sqlalchemy import create_engine 
+import numpy as np
+import pandas as pd
+# 数据可视化
+import matplotlib.pyplot as plt
+import seaborn as sns
+#import pyecharts
+
+# 辅助库
+import math 
+from datetime import datetime
+
+%matplotlib inline
+plt.style.use('ggplot')
+plt.rcParams['font.sans-serif'] = ['SimHei']  #解决seaborn中文字体显示问题
+
+# 创建与数据库中的链接
+engine = create_engine('mysql+pymysql://root:P#y20bsy17@192.168.109.202:3306/waiqin_south')
+
+# 批量化读取excel文件
+with pd.ExcelFile('E:/手机系统报表-项目/0408/拜访记录20190408.xls') as xls:
+    df1 = pd.read_excel(xls, 'sheet1')
+    #df2 = pd.read_excel(xls, 'sheet2')
+#df_concat=[df1,df2]
+#visit_temp = pd.concat(df_concat)
+# 数据写入，若是终端数据存在该数据库，则先删除后添加
+visit_temp=df1
+visit_temp.to_sql(name='visit_data_template', con=engine, if_exists = 'replace', index = False)
+
+# 批量化读取excel文件
+with pd.ExcelFile('E:/手机系统报表-项目/0408/客户信息20190408.xls') as xls:
+    client_temp= pd.read_excel(xls, 'sheet1')
+client_temp['广州地区']=client_temp['销售区域全路径'].str.extract(r'(广州南地区|广州北地区)',expand=False)
+# 数据写入，若是终端数据存在该数据库，则先删除后添加
+client_temp.to_sql(name='client_data_template', con=engine, if_exists = 'replace', index = False)
+
+# 批量化南战区终端任务表
+with pd.ExcelFile('E:/手机系统报表-项目/0408/南战区终端任务表20190408.xls') as xls:
+    termtask_temp= pd.read_excel(xls, 'sheet1')
+termtask_temp['广州地区']=termtask_temp['销售区域全路径'].str.extract(r'(广州南地区|广州北地区)',expand=False)
+termtask_temp.to_sql(name='termtask_temp_template', con=engine, if_exists = 'replace', index = False)
+
+
+# 批量化库存明细
+with pd.ExcelFile('E:/手机系统报表-项目/0408/库存明细20190408.xls') as xls:
+    store_temp= pd.read_excel(xls, 'sheet1')
+store_temp.to_sql(name='store_temp_template', con=engine, if_exists = 'replace', index = False)
