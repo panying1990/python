@@ -20,7 +20,7 @@ import datetime
 
 # 设置服务器
 def make_engine(database):
-    engine_word = 'mysql+pymysql://root:P#y20bsy17@192.168.109.202:3306/'+database
+    engine_word = 'mysql+pymysql:///'+database
     engine = create_engine(engine_word)
     return engine
 
