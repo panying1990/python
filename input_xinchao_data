@@ -1,0 +1,104 @@
+# -*-coding:utf-8-*-
+"""
+@author:panying
+@time:2019/5/5 19:36
+@email:panying1298247841@163.com
+"""
+
+import os
+import pandas as pd
+# 布置实验环境
+import pymysql
+from sqlalchemy import create_engine
+import xlrd
+import numpy as np
+import glob
+import xlwt
+import xlsxwriter
+
+# 设置服务器
+def make_engine(database):
+    engine_word = 'mysql+pymysql://root:*:3306/'+database
+    engine = create_engine(engine_word)
+    return engine
+
+
+# 获得目标文件
+def get_file(file_dir, file_form, file_name):
+    try:
+        os.path.isfile(file_dir)
+    except:
+        print("该路径下没有文件夹！！！")
+    filearray = []
+    for filename in glob.glob(file_dir + "\\*." + file_form):
+        if file_name in filename:
+            filearray.append(filename)
+        else:
+            filearray.append('')
+    for i in range(len(filearray)):
+        if len(filearray[i]) > 4:
+            target_name = filearray[i]
+            return target_name
+
+
+def merge_sheet(excel_dir):
+    """
+    we create sheetName_list to store the sheets name of excel_dir,then use it;
+    create sheetData_frame to store the sheet data
+    """
+    data = xlrd.open_workbook(excel_dir)
+    sheetname_list = data.sheet_names()
+    sheetData_frame = []
+    sh_title = data.sheet_by_index(1).row_values(1)
+    print(sh_title)
+    for sheet_name in sheetname_list:
+        # 获取sheet页的名称
+        if sheet_name == "汇总":
+            continue
+        sheet = data.sheet_by_name(sheet_name)
+        # 获取表的行数
+        nrows = sheet.nrows
+        # 循环打印
+        for i in range(nrows):
+            # 跳过第一行
+            if i == 0:
+                continue
+            if i == 1:
+                continue
+            sheetData_frame.append(sheet.row_values(i,start_colx=0, end_colx=len(sh_title)))
+    sheetData_temp = pd.DataFrame(data=sheetData_frame,columns= sh_title)
+    return sheetData_temp
+
+
+# 将非加工数据导入数据库中
+def input_data(target_data, engine, sql_name, title=[]):
+    df = target_data
+    df.to_sql(name=sql_name, con=engine, if_exists='replace', index=False)
+    return True
+
+
+# 删除目标文件夹中非目标文件
+def delete_document(file_dir, date_time):
+    try:
+        os.path.isfile(file_dir)
+    except:
+        print("该路径下没有文件夹！！！")
+    os.chdir(file_dir)
+    print("文件目录为: %s" %os.listdir(os.getcwd()))
+    file_listdir = os.listdir(os.getcwd())
+    for filename in file_listdir:
+         file_name = filename
+         if date_time not in file_name:
+             os.remove(file_name)
+    return print("非目标文件删除任务完成")
+
+
+# 测试主程序，获得不同数据原始数据
+if __name__ == "__main__":
+    file_dir = "E:\\新潮楼宇广告投放\\report_data"
+    delete_document(file_dir, "点位")
+    file_from = "xlsx"
+    excel_dir = get_file(file_dir, file_from, "点位")
+    dada = merge_sheet(excel_dir)
+    engine = make_engine('xinchao_data_temp')
+    input_data(dada, engine, 'Elevator_data_template')
