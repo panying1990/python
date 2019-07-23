@@ -8,8 +8,8 @@ def timestamp_tostring(date_time):
     return date_time.strftime("%Y%m%d%H%M%S")
 
 
-def msg_josn():
-    json_temp = {"org_id":"ORG926","org_name":"北京澳特舒尔","org_parent_id":"","org_sequence":926}
+def msg_josn():   # 拜访数据请求消息体
+    json_temp = [{"date_start": "2019-07-01", "date_end": "2019-07-02", "page": "1", "rows": "1000"}]
     json_a = json.dumps(json_temp)
     return json_a
 
@@ -38,7 +38,7 @@ def get_json():
 if __name__ == "__main__":
     a = timestamp_tostring(datetime.datetime.now())
     data = msg_josn()
-    appkey = "88888888"
+    appkey = "u081CY95vvTDtXsVCd"
     print(data)
     b = mdfive(data, appkey, a)
     print(b)
