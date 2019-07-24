@@ -14,14 +14,7 @@ def timestamp_tostring(date_time):
 
 
 def msg_json():   # 拜访数据请求消息体
-    json_temp = [{"cm_id": "CM0001",
-    "cm_name": "苏果夫子庙店",
-    "cm_code": "suguo_fzmd",
-    "cm_manager": "王伟,张强,吴为",
-    "cm_type": "大型超市",
-    "cm_district": "华中大区,南京分区,秦淮社区",
-    "create_date": "2015-05-12",
-    "modify_date": "2015-05-12"}]
+    json_temp = [{}]
     json_a = json.dumps(json_temp)
     return json_a
 
@@ -45,10 +38,22 @@ def merge_url(url, open_id, timestamp, md5_msg):
 def url_post(merge_url, msg_json):
     headers = {"Content-Type": "application/json;charset=utf-8"}
     r_json = requests.post(merge_url, data=msg_json, headers=headers)
-    print(r_json.content)
-    print(r_json.text)
-    r_dit = json.loads(r_json.text)
-    return r_dit
+    if r_json.status_code == 200:
+        content = r_json.content
+        ret = json.loads(content.decode("utf-8"))
+        return_code = ret.get("return_code")
+        print("ReturnCode:\t%s" % (return_code))
+        if return_code == 0:
+            response_data = ret.get("response_data")
+            print("ResponseData:\t%s" % (response_data))
+        else:
+            return_msg = ret.get("return_msg")
+            print("ReturnMessage:\t%s" % (return_msg))
+    else:
+        print(r_json.status_code)
+        print(r_json.content)
+    return True
+
 
 
 def find_movies(res):
@@ -118,8 +123,8 @@ if __name__ == "__main__":
     print(md5_msg)
     url_api = merge_url(url, open_id, timestamp, md5_msg)
     print(url_api)
-    re_dict = url_post(url_api, data)
-    print(re_dict['response_data'])
+    url_post(url_api, data)
+
 
 
 
