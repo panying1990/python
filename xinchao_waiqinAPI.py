@@ -121,36 +121,32 @@ def get_cm(json_texts, engine, sql_name):
 
 
 def get_bas(json_texts):
-    for each in json_texts:
-        print(each)
-    # cm_id = []
-    # cm_name = []
-    # cm_dept_id = []
-    # cm_manager_id = []
-    # create_time = []
-    # for json_text in json_texts:
-    #     cm_id.append(json_text['cm_code'])
-    # for a in json_texts:
-    #     cm_name.append(a['cm_name'])
+    gungxuan = []
+    chen_lie = []
+    create_time = []
+    for json_text in json_texts:
+        chen_lie.append(json_text['slfdf_1805150003'])
+    for a in json_texts:
+        chenlie.append(a['cm_name'])
     # for b in json_texts:
     #     cm_dept_id.append(b['cm_dept_waiqin365_id'])
     # for c in json_texts:
     #     cm_manager_id.append(c['cm_manager_waiqin365_id'])
-    # for d in json_texts:
-    #     create_time.append(d['create_time'])
-    # df1 = pd.DataFrame(cm_id)
-    # df2 = pd.DataFrame(cm_name)
-    # df3 = pd.DataFrame(cm_dept_id)
-    # df4 = pd.DataFrame(cm_manager_id)
-    # df5 = pd.DataFrame(create_time)
-    # cm_info = pd.concat([df1, df2, df3, df4,df5], axis=1, ignore_index=True)
-    # cm_info.columns = ["cm_id", "cm_name", "cm_dept_id", "cm_manager_id","create_time"]
-    # cm_info['update_time'] = timestamp_tostring(datetime.datetime.now())
-    # cm_info.to_sql(name=sql_name, con=engine, if_exists='replace', index=False)
+    for d in json_texts:
+        create_time.append(d['create_time'])
+    df1 = pd.DataFrame(cm_id)
+    df2 = pd.DataFrame(cm_name)
+    df3 = pd.DataFrame(cm_dept_id)
+    df4 = pd.DataFrame(cm_manager_id)
+    df5 = pd.DataFrame(create_time)
+    cm_info = pd.concat([df1, df2, df3, df4,df5], axis=1, ignore_index=True)
+    cm_info.columns = ["cm_id", "cm_name", "cm_dept_id", "cm_manager_id","create_time"]
+    cm_info['update_time'] = timestamp_tostring(datetime.datetime.now())
+    cm_info.to_sql(name=sql_name, con=engine, if_exists='replace', index=False)
     return True
 
 
-if __name__ == "__main__":
+def main():
     # 接口数据
     engine = make_engine('xinchao_temp')
     timestamp = timestamp_tostring(datetime.datetime.now())
@@ -176,8 +172,13 @@ if __name__ == "__main__":
     get_cm(json.loads(url_post(cm_url_api, cm_data)), engine, "cm_info_template")
     # 专门拜访数据信息
     bas_url = "https://openapi.waiqin365.com/api/cusVisit/v1/queryCusVisitDetail"
-    bas_data = {"function_id": "5943722112321855914","date_start": "2019-07-24","date_end": "2019-07-25","page": "4",
+    bas_data = {"function_id": "5943722112321855914", "date_start": "2019-07-24", "date_end": "2019-07-25", "page": "4",
                 "rows": "1000"}
     bas_md5_msg = md5_msg(bas_data, app_key, timestamp)
     bas_url_api = merge_url(bas_url, open_id, timestamp, bas_md5_msg)
     get_bas(json.loads(url_post(bas_url_api, bas_data)))
+    return  True
+    
+
+if __name__ == "__main__":
+    
